@@ -1,0 +1,64 @@
+application:
+  subdomain: multica
+  health_check:
+    test_url: http://backend:8080/health
+  public_path:
+    - /api
+  routes:
+    - /=http://frontend:3000
+  upstreams:
+    - location: /api
+      backend: http://backend:8080
+      disable_trim_location: true
+services:
+  postgres:
+    image: registry.lazycat.cloud/anthony/pgvector/pgvector:b20638dab489bba8
+    environment:
+      - POSTGRES_DB=multica
+      - POSTGRES_USER=multica
+      - POSTGRES_PASSWORD=multica
+    binds:
+      - /lzcapp/var/data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U multica -d multica
+  backend:
+    image: registry.lazycat.cloud/anthony/multica-ai/multica-backend:63c5f5bb161d7754
+    environment:
+      - >-
+        DATABASE_URL=postgres://multica:multica@postgres.cloud.lazycat.app.multica.lzcapp:5432/multica?sslmode=disable
+      - PORT=8080
+      - METRICS_ADDR=
+      - JWT_SECRET=you-should-change-me-in-production
+      - FRONTEND_ORIGIN=https://{{ .S.AppDomain }}
+      - CORS_ALLOWED_ORIGINS=https://{{ .S.AppDomain }}
+      - RESEND_API_KEY=
+      - RESEND_FROM_EMAIL=noreply@multica.ai
+      - GOOGLE_CLIENT_ID=
+      - GOOGLE_CLIENT_SECRET=
+      - GOOGLE_REDIRECT_URI=http://localhost:3000/auth/callback
+      - S3_BUCKET=
+      - S3_REGION=us-west-2
+      - CLOUDFRONT_DOMAIN=
+      - CLOUDFRONT_KEY_PAIR_ID=
+      - CLOUDFRONT_PRIVATE_KEY=
+      - COOKIE_DOMAIN={{ .S.AppDomain }}
+      - APP_ENV=lazycat
+      - MULTICA_DEV_VERIFICATION_CODE=123456
+      - MULTICA_APP_URL=https://{{ .S.AppDomain }}
+      - ALLOW_SIGNUP=true
+      - ALLOWED_EMAILS=
+      - ALLOWED_EMAIL_DOMAINS=
+      - ANALYTICS_DISABLED=true
+    depends_on:
+      - postgres
+    binds:
+      - /lzcapp/var/uploads:/app/data/uploads
+  frontend:
+    image: registry.lazycat.cloud/anthony/multica-ai/multica-web:15ec793b0ea53c5c
+    environment:
+      - HOSTNAME=0.0.0.0
+      - REMOTE_API_URL=http://backend:8080
+    depends_on:
+      - backend

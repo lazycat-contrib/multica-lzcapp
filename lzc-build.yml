@@ -1,0 +1,8 @@
+# manifest: 指定 lpk 的 manifest 文件
+manifest: ./lzc-manifest.yml
+
+# pkgout: lpk 输出目录
+pkgout: ./
+
+# icon: 应用图标（png）
+icon: ./lzc-icon.png
