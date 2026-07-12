@@ -1,0 +1,41 @@
+version: 1
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/multica.lpk
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: backend
+build:
+  run_buildscript: false
+images:
+  - id: backend
+    target: service
+    service: backend
+    source: ghcr.io/multica-ai/multica-backend
+    channel: stable
+    tag_regex: '^v?[0-9]+\.[0-9]+\.[0-9]+$'
+    delivery:
+      mode: mirror
+      image_template: ghcr.1ms.run/multica-ai/multica-backend:{tag}
+  - id: frontend
+    target: service
+    service: frontend
+    source: ghcr.io/multica-ai/multica-web
+    channel: stable
+    tag_regex: '^v?[0-9]+\.[0-9]+\.[0-9]+$'
+    delivery:
+      mode: mirror
+      image_template: ghcr.1ms.run/multica-ai/multica-web:{tag}
+stores:
+  official:
+    enabled: false
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: Multica
+    summary: 将编码 Agent 变成能够自主接手任务、报告阻塞和更新状态的协作队友
