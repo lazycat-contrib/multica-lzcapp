@@ -24,7 +24,8 @@ services:
         - CMD-SHELL
         - pg_isready -U multica -d multica
   backend:
-    image: registry.lazycat.cloud/anthony/multica-ai/multica-backend:63c5f5bb161d7754
+    # ghcr.io/multica-ai/multica-backend:v0.3.43
+    image: ghcr.1ms.run/multica-ai/multica-backend:v0.3.43
     environment:
       - >-
         DATABASE_URL=postgres://multica:multica@postgres.cloud.lazycat.app.multica.lzcapp:5432/multica?sslmode=disable
