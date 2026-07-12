@@ -25,6 +25,7 @@ services:
         - pg_isready -U multica -d multica
   backend:
     # ghcr.io/multica-ai/multica-backend:v0.3.43
+    # upstream: ghcr.io/multica-ai/multica-backend:v0.3.43
     image: ghcr.1ms.run/multica-ai/multica-backend:v0.3.43
     environment:
       - >-
@@ -57,7 +58,8 @@ services:
     binds:
       - /lzcapp/var/uploads:/app/data/uploads
   frontend:
-  # ghcr.io/multica-ai/multica-web:v0.3.43
+    # ghcr.io/multica-ai/multica-web:v0.3.43
+    # upstream: ghcr.io/multica-ai/multica-web:v0.3.43
     image: ghcr.1ms.run/multica-ai/multica-web:v0.3.43
     environment:
       - HOSTNAME=0.0.0.0
