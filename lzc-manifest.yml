@@ -57,7 +57,8 @@ services:
     binds:
       - /lzcapp/var/uploads:/app/data/uploads
   frontend:
-    image: registry.lazycat.cloud/anthony/multica-ai/multica-web:15ec793b0ea53c5c
+  # ghcr.io/multica-ai/multica-web:v0.3.43
+    image: ghcr.1ms.run/multica-ai/multica-web:v0.3.43
     environment:
       - HOSTNAME=0.0.0.0
       - REMOTE_API_URL=http://backend:8080
