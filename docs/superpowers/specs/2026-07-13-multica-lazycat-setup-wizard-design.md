@@ -71,7 +71,7 @@ Update `lzc-manifest.yml` to match the current upstream Docker Compose environme
 
 ## File handling
 
-Multica supports attachment upload and download. To satisfy LazyCat App Store requirements, package the official `lzc-file-chooser-inject.js`, add the browser inject for `/*`, and add the content directory to `lzc-build.yml`. The injector must be sourced from the official LazyCat developer URL and kept as an unmodified packaged asset.
+File-picker interception is explicitly outside this change at the operator's request. The package keeps Multica's existing upload and download behavior without adding a browser inject or packaged LazyCat file-picker asset.
 
 ## Source Compose and documentation
 
@@ -87,7 +87,7 @@ Completion requires:
 2. `docker compose -f docker-compose.selfhost.yml config` when Docker Compose is available.
 3. `lzc-cli project lint` for release and development configurations.
 4. `lzc-cli project release` followed by `lzc-cli lpk info` on the produced package.
-5. Inspection that the packaged deployment parameters and file-picker asset are present.
+5. Inspection that the packaged deployment parameters are present.
 6. Confirmation that only the required login email lacks a default and all other setup fields are optional or defaulted.
 
 ## Known constraints

@@ -4,7 +4,7 @@
 
 **Goal:** Add a LazyCat installation wizard, current Multica self-host environment coverage, optional custom-origin support, production email delivery, and a safe private-install fallback.
 
-**Architecture:** `lzc-deploy-params.yml` collects the one required login email plus optional domain, mail, signup, and OAuth settings. `lzc-manifest.yml` renders those values into the backend environment, selects production mode whenever Resend or SMTP is configured, and otherwise keeps the existing fixed-code private-install path. The package also gains stable generated secrets, the official LazyCat file-picker intercept, current upstream Compose content, and matching operator documentation.
+**Architecture:** `lzc-deploy-params.yml` collects the one required login email plus optional domain, mail, signup, and OAuth settings. `lzc-manifest.yml` renders those values into the backend environment, selects production mode whenever Resend or SMTP is configured, and otherwise keeps the existing fixed-code private-install path. The package also gains stable generated secrets, current upstream Compose content, and matching operator documentation.
 
 **Tech Stack:** LazyCat LPK v2 YAML, Go `text/template` manifest rendering, Docker Compose, `lzc-cli` 2.0.8, Markdown.
 
@@ -22,7 +22,7 @@
 - `custom_domain` contains a hostname only, without a scheme or trailing slash.
 - Arbitrary external DNS, TLS, and reverse-proxy provisioning remain outside the LPK.
 - Keep `COOKIE_DOMAIN` and `MULTICA_PUBLIC_URL` empty for the same-origin layout.
-- Package the official file-picker interceptor because Multica supports attachment upload and download.
+- Do not add a file-picker interceptor or packaged browser injection; the operator explicitly removed it from scope.
 - All commits must follow the repository Lore commit protocol.
 
 ---
@@ -335,97 +335,6 @@ Record the optional-mail constraint, rejected always-production and always-devel
 
 ---
 
-### Task 2: Add the mandatory LazyCat file-picker integration
-
-**Files:**
-- Create: `content/lazycat-injects/lzc-file-chooser-inject.js`
-- Modify: `lzc-build.yml`
-- Modify: `lzc-manifest.yml`
-
-**Interfaces:**
-- Consumes: official asset at `https://developer.lazycat.cloud/lazycat-injects/lzc-file-chooser-inject.js`.
-- Produces: a packaged browser injection active on all Multica pages.
-
-- [ ] **Step 1: Confirm the integration is absent**
-
-Run:
-
-```bash
-test -f content/lazycat-injects/lzc-file-chooser-inject.js
-rg -q 'open-save-chooser' lzc-manifest.yml
-rg -q '^contentdir: ./content$' lzc-build.yml
-```
-
-Expected: all commands exit non-zero.
-
-- [ ] **Step 2: Fetch and inspect the official asset outside the workspace**
-
-Run:
-
-```bash
-curl -fsSL https://developer.lazycat.cloud/lazycat-injects/lzc-file-chooser-inject.js -o /tmp/lzc-file-chooser-inject.js
-test -s /tmp/lzc-file-chooser-inject.js
-head -n 5 /tmp/lzc-file-chooser-inject.js
-sha256sum /tmp/lzc-file-chooser-inject.js
-```
-
-Expected: the download is non-empty and JavaScript source is shown. Record the checksum in the commit body.
-
-- [ ] **Step 3: Add the asset through `apply_patch` without modifying its content**
-
-Create `content/lazycat-injects/lzc-file-chooser-inject.js` with byte-for-byte content from `/tmp/lzc-file-chooser-inject.js`. Verify:
-
-```bash
-cmp /tmp/lzc-file-chooser-inject.js content/lazycat-injects/lzc-file-chooser-inject.js
-```
-
-Expected: exit zero.
-
-- [ ] **Step 4: Package and load the interceptor**
-
-Add to `lzc-build.yml`:
-
-```yaml
-contentdir: ./content
-```
-
-Add under `application` in `lzc-manifest.yml`:
-
-```yaml
-  injects:
-    - id: open-save-chooser
-      on: browser
-      when:
-        - "/*"
-      do:
-        - src: file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js
-```
-
-- [ ] **Step 5: Validate Task 2**
-
-Run:
-
-```bash
-test -s content/lazycat-injects/lzc-file-chooser-inject.js
-rg -q '^contentdir: ./content$' lzc-build.yml
-rg -q 'file:///lzcapp/pkg/content/lazycat-injects/lzc-file-chooser-inject.js' lzc-manifest.yml
-git diff --check
-```
-
-Expected: all commands exit zero.
-
-- [ ] **Step 6: Commit Task 2**
-
-Commit the asset, build config, and manifest with a Lore intent line:
-
-```text
-Keep Multica file flows compatible with LazyCat storage
-```
-
-Record the App Store interception requirement, official asset checksum, and browser/runtime verification gap.
-
----
-
 ### Task 3: Synchronize the official Docker Compose reference
 
 **Files:**
@@ -566,7 +475,6 @@ Record the production-mail warning, external-domain boundary, and documentation-
 - Verify: `lzc-deploy-params.yml`
 - Verify: `lzc-manifest.yml`
 - Verify: `docker-compose.selfhost.yml`
-- Verify: `content/lazycat-injects/lzc-file-chooser-inject.js`
 - Verify: `README.md`
 
 **Interfaces:**
@@ -612,10 +520,10 @@ Expected: release succeeds and package info reports package ID `community.lazyca
 Run:
 
 ```bash
-tar -tf /tmp/community.lazycat.app.multica-test.lpk | rg 'lzc-deploy-params.yml|lzc-file-chooser-inject.js|package.yml|manifest'
+tar -tf /tmp/community.lazycat.app.multica-test.lpk | rg 'lzc-deploy-params.yml|package.yml|manifest'
 ```
 
-Expected: deploy parameters, file-picker asset, package metadata, and manifest entries are all listed.
+Expected: deploy parameters, package metadata, and manifest entries are all listed.
 
 - [ ] **Step 5: Check deploy parameter requirements and repository state**
 
