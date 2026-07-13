@@ -23,6 +23,10 @@ services:
       test:
         - CMD-SHELL
         - pg_isready -U multica -d multica
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      
   backend:
     # ghcr.io/multica-ai/multica-backend:v0.3.43
     # upstream: ghcr.io/multica-ai/multica-backend:v0.3.43
