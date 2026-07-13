@@ -5,6 +5,9 @@ description: Multica 将编码 Agent 变成真正的队友。像分配给同事�
 author: multica.ai
 homepage: https://multica.ai
 min_os_version: 1.5.0
+permissions:
+  required:
+    - net.internet
 locales:
   zh:
     name: Multica

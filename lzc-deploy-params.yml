@@ -1,0 +1,172 @@
+params:
+  - id: login_email
+    type: string
+    name: "Login Email"
+    description: "Email address allowed to create the first account and sign in"
+    optional: false
+
+  - id: custom_domain
+    type: string
+    name: "Custom Domain"
+    description: "External hostname without https://, http://, or a trailing slash. Leave empty to use the LazyCat application domain."
+    default_value: ""
+    optional: true
+
+  - id: verification_code
+    type: secret
+    name: "Private Verification Code"
+    description: "Fixed login code used only when neither Resend nor SMTP is configured. Do not use this fallback on a publicly reachable instance."
+    default_value: "123456"
+    optional: true
+
+  - id: allow_signup
+    type: bool
+    name: "Allow Signup"
+    description: "Allow new accounts that match the configured email allowlist"
+    default_value: "true"
+    optional: true
+
+  - id: allowed_email_domains
+    type: string
+    name: "Allowed Email Domains"
+    description: "Optional comma-separated additional email domains allowed to register"
+    default_value: ""
+    optional: true
+
+  - id: disable_workspace_creation
+    type: bool
+    name: "Disable Workspace Creation"
+    description: "Prevent all users from creating additional workspaces after initial setup"
+    default_value: "false"
+    optional: true
+
+  - id: resend_api_key
+    type: secret
+    name: "Resend API Key"
+    description: "Optional Resend API key. When set, production email verification is enabled unless SMTP Host is also set."
+    default_value: ""
+    optional: true
+
+  - id: resend_from_email
+    type: string
+    name: "Sender Email"
+    description: "Sender address used by Resend or SMTP. Resend requires an address on a verified domain."
+    default_value: "noreply@multica.ai"
+    optional: true
+
+  - id: smtp_host
+    type: string
+    name: "SMTP Host"
+    description: "Optional SMTP relay hostname. When set, SMTP overrides Resend and production email verification is enabled."
+    default_value: ""
+    optional: true
+
+  - id: smtp_port
+    type: string
+    name: "SMTP Port"
+    description: "SMTP relay port: 25 for relay, 587 for STARTTLS, or 465 for SMTPS"
+    default_value: "25"
+    optional: true
+
+  - id: smtp_username
+    type: string
+    name: "SMTP Username"
+    description: "Optional SMTP authentication username"
+    default_value: ""
+    optional: true
+
+  - id: smtp_password
+    type: secret
+    name: "SMTP Password"
+    description: "Optional SMTP authentication password"
+    default_value: ""
+    optional: true
+
+  - id: smtp_tls
+    type: string
+    name: "SMTP TLS Mode"
+    description: "Leave empty for STARTTLS, or use implicit for SMTPS on a non-standard port"
+    default_value: ""
+    optional: true
+
+  - id: smtp_tls_insecure
+    type: bool
+    name: "Allow Insecure SMTP TLS"
+    description: "Skip SMTP certificate verification only for a private CA or self-signed certificate"
+    default_value: "false"
+    optional: true
+
+  - id: smtp_ehlo_name
+    type: string
+    name: "SMTP EHLO Name"
+    description: "Optional public FQDN announced to strict SMTP relays"
+    default_value: ""
+    optional: true
+
+  - id: google_client_id
+    type: string
+    name: "Google Client ID"
+    description: "Optional Google OAuth client ID"
+    default_value: ""
+    optional: true
+
+  - id: google_client_secret
+    type: secret
+    name: "Google Client Secret"
+    description: "Optional Google OAuth client secret"
+    default_value: ""
+    optional: true
+
+locales:
+  zh:
+    login_email:
+      name: "登录邮箱"
+      description: "允许创建首个账号并登录的邮箱地址"
+    custom_domain:
+      name: "自定义域名"
+      description: "外部访问域名，不含 https://、http:// 和末尾斜杠；留空则使用懒猫应用域名"
+    verification_code:
+      name: "私有验证码"
+      description: "仅在未配置 Resend 和 SMTP 时使用的固定登录验证码；公网实例不要使用此模式"
+    allow_signup:
+      name: "允许注册"
+      description: "允许符合邮箱白名单的新账号注册"
+    allowed_email_domains:
+      name: "允许的邮箱域名"
+      description: "可选的额外注册邮箱域名，多个域名使用逗号分隔"
+    disable_workspace_creation:
+      name: "禁止创建工作区"
+      description: "初始化完成后禁止所有用户继续创建工作区"
+    resend_api_key:
+      name: "Resend API Key"
+      description: "可选；填写后启用生产邮件验证码，除非同时填写了 SMTP 主机"
+    resend_from_email:
+      name: "发件邮箱"
+      description: "Resend 或 SMTP 使用的发件地址；Resend 要求该地址属于已验证域名"
+    smtp_host:
+      name: "SMTP 主机"
+      description: "可选 SMTP 中继主机；填写后优先于 Resend 并启用生产邮件验证码"
+    smtp_port:
+      name: "SMTP 端口"
+      description: "25 用于中继，587 用于 STARTTLS，465 用于 SMTPS"
+    smtp_username:
+      name: "SMTP 用户名"
+      description: "可选的 SMTP 认证用户名"
+    smtp_password:
+      name: "SMTP 密码"
+      description: "可选的 SMTP 认证密码"
+    smtp_tls:
+      name: "SMTP TLS 模式"
+      description: "留空使用 STARTTLS；非标准 SMTPS 端口可填写 implicit"
+    smtp_tls_insecure:
+      name: "允许不安全 SMTP TLS"
+      description: "仅私有 CA 或自签证书场景跳过 SMTP 证书校验"
+    smtp_ehlo_name:
+      name: "SMTP EHLO 名称"
+      description: "严格 SMTP 中继要求的可选公网 FQDN"
+    google_client_id:
+      name: "Google Client ID"
+      description: "可选的 Google OAuth 客户端 ID"
+    google_client_secret:
+      name: "Google Client Secret"
+      description: "可选的 Google OAuth 客户端密钥"

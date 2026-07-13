@@ -3,6 +3,7 @@ application:
   health_check:
     test_url: http://backend:8080/health
   public_path:
+    - /
     - /api
   routes:
     - /=http://frontend:3000
@@ -16,7 +17,7 @@ services:
     environment:
       - POSTGRES_DB=multica
       - POSTGRES_USER=multica
-      - POSTGRES_PASSWORD=multica
+      - POSTGRES_PASSWORD={{ stable_secret "postgres_password" }}
     binds:
       - /lzcapp/var/data:/var/lib/postgresql/data
     healthcheck:
@@ -32,29 +33,51 @@ services:
     # upstream: ghcr.io/multica-ai/multica-backend:v0.3.43
     image: ghcr.1ms.run/multica-ai/multica-backend:v0.3.43
     environment:
-      - DATABASE_URL=postgres://multica:multica@postgres:5432/multica?sslmode=disable
+      - DATABASE_URL=postgres://multica:{{ stable_secret "postgres_password" }}@postgres:5432/multica?sslmode=disable
       - PORT=8080
       - METRICS_ADDR=
-      - JWT_SECRET=you-should-change-me-in-production
-      - FRONTEND_ORIGIN=https://{{ .S.AppDomain }}
-      - CORS_ALLOWED_ORIGINS=https://{{ .S.AppDomain }}
-      - RESEND_API_KEY=
-      - RESEND_FROM_EMAIL=noreply@multica.ai
-      - GOOGLE_CLIENT_ID=
-      - GOOGLE_CLIENT_SECRET=
-      - GOOGLE_REDIRECT_URI=http://localhost:3000/auth/callback
+      - JWT_SECRET={{ stable_secret "jwt_secret" }}
+      - FRONTEND_ORIGIN={{if .U.custom_domain}}https://{{ .U.custom_domain }}{{else}}https://{{ .S.AppDomain }}{{end}}
+      - CORS_ALLOWED_ORIGINS=https://{{ .S.AppDomain }}{{if .U.custom_domain}},https://{{ .U.custom_domain }}{{end}}
+      - RESEND_API_KEY={{ .U.resend_api_key }}
+      - RESEND_FROM_EMAIL={{ .U.resend_from_email }}
+      - SMTP_HOST={{ .U.smtp_host }}
+      - SMTP_PORT={{ .U.smtp_port }}
+      - SMTP_USERNAME={{ .U.smtp_username }}
+      - SMTP_PASSWORD={{ .U.smtp_password }}
+      - SMTP_TLS={{ .U.smtp_tls }}
+      - SMTP_TLS_INSECURE={{ .U.smtp_tls_insecure }}
+      - SMTP_EHLO_NAME={{ .U.smtp_ehlo_name }}
+      - GOOGLE_CLIENT_ID={{ .U.google_client_id }}
+      - GOOGLE_CLIENT_SECRET={{ .U.google_client_secret }}
+      - GOOGLE_REDIRECT_URI={{if .U.custom_domain}}https://{{ .U.custom_domain }}{{else}}https://{{ .S.AppDomain }}{{end}}/auth/callback
+      - COOKIE_DOMAIN=
+      - APP_ENV={{if or .U.smtp_host .U.resend_api_key}}production{{else}}development{{end}}
+      - MULTICA_DEV_VERIFICATION_CODE={{if or .U.smtp_host .U.resend_api_key}}{{else}}{{ .U.verification_code }}{{end}}
+      - MULTICA_APP_URL={{if .U.custom_domain}}https://{{ .U.custom_domain }}{{else}}https://{{ .S.AppDomain }}{{end}}
+      - ALLOW_SIGNUP={{ .U.allow_signup }}
+      - ALLOWED_EMAILS={{ .U.login_email }}
+      - ALLOWED_EMAIL_DOMAINS={{ .U.allowed_email_domains }}
+      - DISABLE_WORKSPACE_CREATION={{ .U.disable_workspace_creation }}
       - S3_BUCKET=
       - S3_REGION=us-west-2
+      - AWS_ENDPOINT_URL=
+      - S3_USE_PATH_STYLE=
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - ATTACHMENT_DOWNLOAD_MODE=auto
+      - ATTACHMENT_DOWNLOAD_URL_TTL=30m
       - CLOUDFRONT_DOMAIN=
       - CLOUDFRONT_KEY_PAIR_ID=
       - CLOUDFRONT_PRIVATE_KEY=
-      - COOKIE_DOMAIN={{ .S.AppDomain }}
-      - APP_ENV=lazycat
-      - MULTICA_DEV_VERIFICATION_CODE=123456
-      - MULTICA_APP_URL=https://{{ .S.AppDomain }}
-      - ALLOW_SIGNUP=true
-      - ALLOWED_EMAILS=
-      - ALLOWED_EMAIL_DOMAINS=
+      - GITHUB_APP_SLUG=
+      - GITHUB_WEBHOOK_SECRET=
+      - MULTICA_PUBLIC_URL=
+      - MULTICA_TRUSTED_PROXIES=
+      - MULTICA_LARK_SECRET_KEY=
+      - MULTICA_LARK_HTTP_BASE_URL=
+      - MULTICA_LARK_CALLBACK_BASE_URL=
+      - MULTICA_SLACK_SECRET_KEY=
       - ANALYTICS_DISABLED=true
     depends_on:
       - postgres
