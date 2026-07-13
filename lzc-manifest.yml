@@ -29,7 +29,7 @@ services:
     image: ghcr.1ms.run/multica-ai/multica-backend:v0.3.43
     environment:
       - >-
-        DATABASE_URL=postgres://multica:multica@postgres.cloud.lazycat.app.multica.lzcapp:5432/multica?sslmode=disable
+        DATABASE_URL=postgres://multica:multica@postgres:5432/multica?sslmode=disable
       - PORT=8080
       - METRICS_ADDR=
       - JWT_SECRET=you-should-change-me-in-production
