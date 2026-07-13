@@ -1,5 +1,5 @@
 package: community.lazycat.app.multica
-version: 0.3.43
+version: 0.4.0
 name: multica
 description: Multica 将编码 Agent 变成真正的队友。像分配给同事一样分配给 Agent——它们会自主接手工作、编写代码、报告阻塞问题、更新状态。
 author: multica.ai
@@ -20,6 +20,4 @@ locales:
   en:
     name: Multica
     description: >-
-      Multica turns coding agents into real teammates. Assign issues to an agent
-      like you'd assign to a colleague — they'll pick up the work, write code,
-      report blockers, and update statuses autonomously.
+      Multica turns coding agents into real teammates. Assign issues to an agent like you'd assign to a colleague — they'll pick up the work, write code, report blockers, and update statuses autonomously.
