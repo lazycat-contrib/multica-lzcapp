@@ -1,5 +1,5 @@
 package: community.lazycat.app.multica
-version: 0.4.3
+version: 0.4.4
 name: multica
 description: Multica 将编码 Agent 变成真正的队友。像分配给同事一样分配给 Agent——它们会自主接手工作、编写代码、报告阻塞问题、更新状态。
 author: multica.ai
